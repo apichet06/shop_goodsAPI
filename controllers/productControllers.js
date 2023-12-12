@@ -6,6 +6,12 @@ class ProductController {
     static async CreateProdect(req, res) {
         try {
             const { pro_name, pro_description, pro_cost_price, pro_sellprice, pro_qty, pro_minstock, pro_status, users_id, unit_id, type_id } = req.body;
+            const exitProname = await ProductModel.FindByPor_name(pro_name)
+
+            if (exitProname) {
+                return res.status(400).json({ status: 'error', message: exists + exitProname.pro_name })
+
+            }
 
 
             const pro_id = await ProductModel.generateUniqueId();

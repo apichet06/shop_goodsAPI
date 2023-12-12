@@ -4,6 +4,8 @@ deletesuccess = "ลบข้อมูลสำเร็จ!"
 
 deleteFailed = "ลบข้อมูลไม่สำเร็จ!"
 updateFailed = "แก้ไขข้อมูลไม่สำเร็จ!"
+exists = "ข้อมูลนี้มีอยู่แล้ว :"
+
 
 ID_not_found = "ไม่พบรหัสที่ระบุครับ!"
 User_not_found = "ไม่พบข้อมูลผู้ใช้"

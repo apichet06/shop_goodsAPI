@@ -132,6 +132,16 @@ class ProductModel {
     }
 
 
+    static async FindByPor_name(name) {
+        const [rows] = await db.query('SELECT pro_name FROM products WHERE pro_name = ?', [name]);
+        // console.log(rows);
+        return rows[0] || null;
+
+    }
+
+
+
+
 }
 
 module.exports = ProductModel;
