@@ -1,11 +1,12 @@
 const Users = require("../models/userModel");
 const bcrypt = require('bcrypt');
 require("../config/messages");
-
+const jwt = require('jsonwebtoken');
+require('dotenv');
 
 class UsersController {
 
-    static async createUsers(req, res) {
+    static async CreateUsers(req, res) {
         try {
             const { u_title, u_firstname, u_lastname, u_email, u_address, u_ship_address, u_tel, u_status, u_password } = req.body;
 
@@ -41,11 +42,11 @@ class UsersController {
         }
     }
 
-    static async updateUsers(req, res) {
+    static async UpdateUsers(req, res) {
         try {
-            const { u_title, u_firstname, u_lastname, u_email, u_address, u_ship_address, u_tel, u_status } = req.body;
+            const { u_id } = req.params;
+            const { u_title, u_firstname, u_lastname, u_address, u_ship_address, u_tel, u_status } = req.body;
             const userData = {
-                u_id,
                 u_title,
                 u_firstname,
                 u_lastname,
@@ -55,8 +56,13 @@ class UsersController {
                 u_status
             }
 
-            const user = await Users.update(userData);
-            res.status(200).json({ status: 'ok', user });
+            const user = await Users.update(userData, u_id);
+            if (user) {
+                res.status(200).json({ status: 'ok', data: user });
+            } else {
+                res.status(400).json({ status: 'error', message: User_not_found })
+            }
+
         } catch (error) {
             console.error(error.message);
             res.status(500).json({ status: error500, message: error.message });
@@ -64,6 +70,22 @@ class UsersController {
 
     }
 
+    static async DeleteUsers(req, res) {
+        try {
+            const { u_id } = req.params;
+            const user = await Users.getUserById(u_id);
+            if (!user) {
+                return res.status(409).json({ message: ID_not_found })
+            }
+            if (user) {
+                await Users.delete(u_id)
+                const { u_password, ...data } = user
+                res.status(200).json({ status: 'ok', message: deletesuccess, user: data })
+            }
+        } catch (error) {
+            res.status(500).json({ status: error500, message: error.message })
+        }
+    }
 
     static async ShowUserAll(req, res) {
         try {
@@ -81,6 +103,34 @@ class UsersController {
         }
     }
 
+    static async login(req, res) {
+        const { u_email, u_password } = req.body;
+
+
+        try {
+
+            const user = await Users.findByEmail(u_email);
+
+            if (!user) {
+                return res.status(400).json({ error: User_not_found });
+            }
+            // Compare passwords
+            const passwordMatch = await Users.comparePassword(u_password, user.u_password);
+            // console.log(passwordMatch);
+            if (!passwordMatch) {
+                return res.status(401).json({ error: Invalid_password });
+            }
+
+            // Generate JWT token
+            const token = jwt.sign({ userId: user.u_id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+            delete user.u_password
+            // Return the token
+            res.json({ success: true, token, user });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: error500, message: error.message });
+        }
+    }
 
 }
 

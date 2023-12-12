@@ -1,6 +1,10 @@
 insertsuccess = "บันทีกข้อมูลสำเร็จ!"
 updatsesuccess = "อับเดทข้อมูลสำเร็จ!"
 deletesuccess = "ลบข้อมูลสำเร็จ!"
+
+deleteFailed = "ลบข้อมูลไม่สำเร็จ!"
+updateFailed = "แก้ไขข้อมูลไม่สำเร็จ!"
+
 ID_not_found = "ไม่พบรหัสที่ระบุครับ!"
 User_not_found = "ไม่พบข้อมูลผู้ใช้"
 repeat_email = "มีผู้ใช้ Email นี้อยู่แล้ว!"

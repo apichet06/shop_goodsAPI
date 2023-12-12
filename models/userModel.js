@@ -1,6 +1,6 @@
 const db = require("../config/db");
-
-
+const bcrypt = require("bcrypt");
+require("../config/messages");
 class Users {
 
     static async generateUniqueId() {
@@ -35,18 +35,49 @@ class Users {
         }
     }
 
-    static async update(userData) {
-        const [result] = await db.query("UPDATE users SET ?", userData);
+    static async update(userData, u_id) {
+        try {
 
-        if (result) {
+            const [result] = await db.query("UPDATE users SET ? Where u_id = ? ", [userData, u_id]);
 
-            return result.affectedRows;
-        } else {
-            throw new Error('User update failed.'); // Handle the case when the update was not successful
+            const [user] = await db.query('SELECT * FROM users WHERE u_id = ?', u_id);
+
+            if (result) {
+                return user;
+            } else {
+                throw new Error(updateFailed);
+            }
+
+        } catch (err) {
+            return error.message;
         }
+
     }
 
 
+    static async delete(u_id) {
+
+        try {
+            const [result] = await db.query('DELETE FROM users WHERE  u_id = ?', [u_id])
+            // console.log(result.affectedRows);
+            if (result) {
+                return result.affectedRows;
+            } else {
+                throw new Error(deleteFailed); // Handle the case when the delete
+            }
+
+        } catch (error) {
+            throw error;
+        }
+
+    }
+
+    static async getUserById(u_id) {
+
+        const [rows] = await db.query('SELECT * FROM users WHERE u_id = ?', [u_id]);
+        // console.log(rows);
+        return rows[0] || null;
+    }
 
     static async userAll() {
         try {
@@ -54,7 +85,7 @@ class Users {
             if (result) {
                 return result;
             } else {
-                throw new Error('ไม่พบข้อมูลผู้ใช้!')
+                throw new Error(deleteFailed)
             }
         } catch (error) {
             throw error;
@@ -62,11 +93,15 @@ class Users {
     }
 
     static async findByEmail(email) {
-
         const [rows] = await db.query('SELECT * FROM users WHERE u_email = ?', [email]);
         // console.log(rows);
         return rows[0] || null;
     }
+
+    static async comparePassword(password, hashedPassword) {
+        return bcrypt.compare(password, hashedPassword)
+    }
+
 
 
 }
