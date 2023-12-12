@@ -1,6 +1,8 @@
 const FileUplood = require('../models/fileUploadModel');
 const ProductModel = require('../models/productModel');
 const moment = require('moment');
+const fs = require('fs');
+
 class ProductController {
 
     static async CreateProdect(req, res) {
@@ -8,10 +10,7 @@ class ProductController {
             const { pro_name, pro_description, pro_cost_price, pro_sellprice, pro_qty, pro_minstock, pro_status, users_id, unit_id, type_id } = req.body;
             const exitProname = await ProductModel.FindByPor_name(pro_name)
 
-            if (exitProname) {
-                return res.status(400).json({ status: 'error', message: exists + exitProname.pro_name })
 
-            }
 
 
             const pro_id = await ProductModel.generateUniqueId();
@@ -19,6 +18,16 @@ class ProductController {
 
             const files = req.files;
             const folder = 'products';
+
+
+            if (exitProname) {
+                files.map(file => {
+                    file && fs.unlinkSync(file.path);
+                })
+                return res.status(400).json({ status: 'error', message: exists + exitProname.pro_name })
+
+            }
+
             // บันทีกรูปภาพ หลายๆรูปภาพ
             const filePromises = files ? files.map((file, index) => FileUplood.uploadFile(file, `${pro_id}-${index + 1}`, folder)) : '';
 
@@ -29,13 +38,14 @@ class ProductController {
             // บันทึกข้อมูลรูปภาพ array 
             await ProductModel.ProductImages(image_filename, pro_id);
 
+
+
             const proData = {
                 pro_id, pro_name, pro_description, pro_cost_price, pro_sellprice,
                 pro_qty, pro_minstock, pro_status, users_id, unit_id, product_type_id: type_id, pro_date
             };
 
-            const product = await ProductModel.Create(proData)
-
+            const product = await ProductModel.Create(proData);
 
             res.status(200).json({ status: 'ok', data: product });
 
