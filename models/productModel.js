@@ -11,11 +11,11 @@ class ProductModel {
             const currentMaxId = result[0].maxId;
 
             if (currentMaxId) {
-                const idNumber = parseInt(currentMaxId.slice(1)) + 1;
-                const nextId = `P${idNumber.toString().padStart(9, '0')}`;
+                const idNumber = parseInt(currentMaxId.slice(3)) + 1;
+                const nextId = `PRO${idNumber.toString().padStart(10, '0')}`;
                 return nextId;
             } else {
-                return 'PRO100000001';
+                return 'PRO1000000001';
             }
         } catch (error) {
             throw error;
@@ -24,7 +24,9 @@ class ProductModel {
 
 
     static async maxImage(pro_id) {
-        try {
+        try {/* `pro_id` is a unique identifier for a product. It is generated using
+        the `generateUniqueId()` method from the `ProductModel` class. */
+
             const [result] = await db.query('SELECT MAX(image_file) as image_file FROM product_image WHERE pro_id = ?', pro_id);
             // console.log(result[0].image_file);
             if (result[0].image_file) {
@@ -84,10 +86,11 @@ class ProductModel {
 
         try {
             const offset = (page - 1) * per_page;
+
             let sql = `
             SELECT p.*, pt.type_name
             FROM products p
-            INNER JOIN product_type pt ON p.product_type_id = pt.type_id
+            INNER JOIN product_type pt ON p.product_type_id = pt.id
             LEFT JOIN users a ON p.users_id = a.u_id
             LEFT JOIN unit b ON p.unit_id = b.id   
             `;

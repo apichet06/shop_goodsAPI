@@ -1,6 +1,6 @@
 const FileUplood = require('../models/fileUploadModel');
 const ProductModel = require('../models/productModel');
-
+const moment = require('moment');
 class ProductController {
 
     static async CreateProdect(req, res) {
@@ -9,8 +9,7 @@ class ProductController {
 
 
             const pro_id = await ProductModel.generateUniqueId();
-            // const currentDate = new Date();
-            // const pro_date = moment(currentDate).format('YYYY-MM-DD HH:mm:ss');
+            const pro_date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
             const files = req.files;
             const folder = 'products';
@@ -24,15 +23,18 @@ class ProductController {
             // บันทึกข้อมูลรูปภาพ array 
             await ProductModel.ProductImages(image_filename, pro_id);
 
-            const proData = { pro_id, pro_name, pro_description, pro_cost_price, pro_sellprice, pro_qty, pro_minstock, pro_status, users_id, unit_id, type_id };
+            const proData = {
+                pro_id, pro_name, pro_description, pro_cost_price, pro_sellprice,
+                pro_qty, pro_minstock, pro_status, users_id, unit_id, product_type_id: type_id, pro_date
+            };
 
-            const product = await ProductModel.create(proData)
+            const product = await ProductModel.Create(proData)
 
 
             res.status(200).json({ status: 'ok', data: product });
 
         } catch (error) {
-            res.status(500).send({ error: error500 });
+            res.status(500).send({ error: error500, message: error.message });
         }
 
     }
@@ -51,8 +53,7 @@ class ProductController {
             const page = parseInt(req.params.page) || 1;
             const per_page = parseInt(req.params.per_page) || 10;
             const search = req.body.search || '';
-
-            const productmodels = await productModel.ShowproductsAll(page, per_page, search);
+            const productmodels = await ProductModel.ShowproductsAll(page, per_page, search);
 
             if (productmodels) {
                 res.status(200).json({
