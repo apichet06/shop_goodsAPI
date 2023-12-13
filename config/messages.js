@@ -1,18 +1,21 @@
-insertsuccess = "บันทีกข้อมูลสำเร็จ!"
-updatsesuccess = "อับเดทข้อมูลสำเร็จ!"
-deletesuccess = "ลบข้อมูลสำเร็จ!"
+class Messages {
+    static insertSuccess = "บันทีกข้อมูลสำเร็จ!";
+    static updateSuccess = "อับเดทข้อมูลสำเร็จ!";
+    static deleteSuccess = "ลบข้อมูลสำเร็จ!";
 
-deleteFailed = "ลบข้อมูลไม่สำเร็จ!"
-updateFailed = "แก้ไขข้อมูลไม่สำเร็จ!"
-exists = "ข้อมูลนี้มีอยู่แล้ว :"
+    static deleteFailed = "ลบข้อมูลไม่สำเร็จ!";
+    static updateFailed = "แก้ไขข้อมูลไม่สำเร็จ!";
+    static exists = "ข้อมูลนี้มีอยู่แล้ว :";
 
+    static idNotFound = "ไม่พบรหัสที่ระบุครับ!";
+    static userNotFound = "ไม่พบข้อมูลผู้ใช้";
+    static repeatEmail = "มีผู้ใช้ Email นี้อยู่แล้ว!";
+    static error500 = "เกิดข้อผิดพลาด!";
+    static invalidPassword = "รหัสผ่านไม่ถูกต้อง!";
+    static dataUnlinkError = "ไม่สามารถลบไฟล์ได้!";
+    static dataUnlinkSuccess = "ลบไฟล์สำเร็จ!";
+    static invalidToken = "Invalid token, โทเค็นไม่ถูกต้อง";
+    static notToken = "Authentication token is missing, ไม่มีโทเค็นการตรวจสอบสิทธิ์";
+}
 
-ID_not_found = "ไม่พบรหัสที่ระบุครับ!"
-User_not_found = "ไม่พบข้อมูลผู้ใช้"
-repeat_email = "มีผู้ใช้ Email นี้อยู่แล้ว!"
-error500 = "เกิดข้อผิดพลาด!"
-Invalid_password = "รหัสผ่านไม่ถูกต้อง!"
-dataunlinkError = "ไม่สามารถลบไฟล์ได้!"
-dataunlinksuccess = "ลบไฟล์สำเร็จ!"
-Invalid_token = "Invalid token,โทเค็นไม่ถูกต้อง"
-not_token = "Authentication token is missing,ไม่มีโทเค็นการตรวจสอบสิทธิ์"
+module.exports = Messages

@@ -1,6 +1,7 @@
 const db = require("../config/db");
 const bcrypt = require("bcrypt");
-require("../config/messages");
+const Messages = require("../config/messages");
+
 class Users {
 
     static async generateUniqueId() {
@@ -45,7 +46,7 @@ class Users {
             if (result) {
                 return user;
             } else {
-                throw new Error(updateFailed);
+                throw new Error(Messages.updateFailed);
             }
 
         } catch (err) {
@@ -63,7 +64,7 @@ class Users {
             if (result) {
                 return result.affectedRows;
             } else {
-                throw new Error(deleteFailed); // Handle the case when the delete
+                throw new Error(Messages.deleteFailed); // Handle the case when the delete
             }
 
         } catch (error) {
@@ -85,7 +86,7 @@ class Users {
             if (result) {
                 return result;
             } else {
-                throw new Error(deleteFailed)
+                throw new Error(Messages.deleteFailed)
             }
         } catch (error) {
             throw error;

@@ -8,6 +8,7 @@ const upload = multer({ dest: 'uploads/' })
 
 router.get('/:page/:per_page', ProductController.ProductAll);
 router.post('/', upload.array('file'), ProductController.CreateProdect)
-
+router.put('/:pro_id', upload.array('file'), ProductController.UpdateProduct)
+router.delete('/:pro_id', ProductController.DeleteProduct)
 
 module.exports = router

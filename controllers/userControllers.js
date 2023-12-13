@@ -2,6 +2,7 @@ const Users = require("../models/userModel");
 const bcrypt = require('bcrypt');
 require("../config/messages");
 const jwt = require('jsonwebtoken');
+const Messages = require("../config/messages");
 require('dotenv');
 
 class UsersController {
@@ -13,7 +14,7 @@ class UsersController {
             const exitEmail = await Users.findByEmail(u_email);
 
             if (exitEmail) {
-                return res.status(409).json({ error: repeat_email })
+                return res.status(409).json({ error: Messages.repeat_email })
             }
 
             const u_id = await Users.generateUniqueId();
@@ -33,12 +34,12 @@ class UsersController {
             }
 
             const user = await Users.create(userData);
-            res.status(200).json({ status: 'ok', user });
+            res.status(200).json({ status: 'ok', message: Messages.insertSuccess, user });
 
 
         } catch (error) {
-            console.error(error.message);
-            res.status(500).json({ status: error500, message: error.message });
+
+            res.status(500).json({ status: Messages.error500, message: error.message });
         }
     }
 
@@ -58,14 +59,14 @@ class UsersController {
 
             const user = await Users.update(userData, u_id);
             if (user) {
-                res.status(200).json({ status: 'ok', data: user });
+                res.status(200).json({ status: 'ok', message: Messages.updateSuccess, data: user });
             } else {
-                res.status(400).json({ status: 'error', message: User_not_found })
+                res.status(400).json({ status: 'error', message: Messages.userNotFound })
             }
 
         } catch (error) {
-            console.error(error.message);
-            res.status(500).json({ status: error500, message: error.message });
+
+            res.status(500).json({ status: Messages.error500, message: error.message });
         }
 
     }
@@ -75,15 +76,15 @@ class UsersController {
             const { u_id } = req.params;
             const user = await Users.getUserById(u_id);
             if (!user) {
-                return res.status(409).json({ message: ID_not_found })
+                return res.status(409).json({ message: Messages.idNotFound })
             }
             if (user) {
                 await Users.delete(u_id)
                 const { u_password, ...data } = user
-                res.status(200).json({ status: 'ok', message: deletesuccess, user: data })
+                res.status(200).json({ status: 'ok', message: Messages.deleteSuccess, user: data })
             }
         } catch (error) {
-            res.status(500).json({ status: error500, message: error.message })
+            res.status(500).json({ status: Messages.error500, message: error.message })
         }
     }
 
@@ -99,7 +100,7 @@ class UsersController {
                 res.status(200).json({ status: 'ok', data: sanitizedUsers });
             }
         } catch (error) {
-            res.status(500).json({ status: error500, message: error.message });
+            res.status(500).json({ status: Messages.error500, message: error.message });
         }
     }
 
@@ -112,13 +113,13 @@ class UsersController {
             const user = await Users.findByEmail(u_email);
 
             if (!user) {
-                return res.status(400).json({ error: User_not_found });
+                return res.status(400).json({ error: Messages.userNotFound });
             }
             // Compare passwords
             const passwordMatch = await Users.comparePassword(u_password, user.u_password);
             // console.log(passwordMatch);
             if (!passwordMatch) {
-                return res.status(401).json({ error: Invalid_password });
+                return res.status(401).json({ error: Messages.invalidPassword });
             }
 
             // Generate JWT token
@@ -127,8 +128,7 @@ class UsersController {
             // Return the token
             res.json({ success: true, token, user });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: error500, message: error.message });
+            res.status(500).json({ error: Messages.error500, message: error.message });
         }
     }
 

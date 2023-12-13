@@ -19,7 +19,7 @@ pool.getConnection(function (err, connection) {
         console.log('Error getting connection from database  ' + err.message);
         return;
     }
-    console.log('connection from database');
+    console.log('Connection DB Successfully');
     connection.release();
 })
 

@@ -1,7 +1,5 @@
 const db = require("../config/db");
-
-
-
+const Messages = require("../config/messages");
 
 class ProductModel {
 
@@ -24,8 +22,7 @@ class ProductModel {
 
 
     static async maxImage(pro_id) {
-        try {/* `pro_id` is a unique identifier for a product. It is generated using
-        the `generateUniqueId()` method from the `ProductModel` class. */
+        try {
 
             const [result] = await db.query('SELECT MAX(image_file) as image_file FROM product_image WHERE pro_id = ?', pro_id);
             // console.log(result[0].image_file);
@@ -37,7 +34,6 @@ class ProductModel {
             } else {
                 return 0;
             }
-
 
         } catch (error) {
             throw error;
@@ -79,6 +75,56 @@ class ProductModel {
             throw error;
         }
     }
+
+    static async Update(proData, pro_id) {
+        try {
+            const [result] = await db.query('UPDATE products SET ? WHERE pro_id = ?', [proData, pro_id]);
+            const affectedRows = result.affectedRows;
+            if (affectedRows > 0) {
+                const [product] = await db.query('SELECT * FROM products WHERE pro_id = ?', pro_id);
+
+                return product;
+            } else {
+                return null; // หรือจะส่งข้อความแสดงว่าไม่พบรายการที่จะอัปเดตก็ได้
+            }
+        } catch (error) {
+            console.error('Error in update:', error);
+            throw error;
+        }
+
+    }
+
+    static async getProductById(pro_id) {
+
+        const [rows] = await db.query('SELECT * FROM products WHERE pro_id = ?', [pro_id]);
+        // console.log(rows);
+        return rows[0] || null;
+    }
+
+    static async getImageById(pro_id) {
+        const rows = await db.query('SELECT * FROM product_image WHERE pro_id = ?', [pro_id]);
+        return rows[0] || null;
+    }
+
+
+    static async delete(pro_id) {
+        try {
+
+            const [result] = await db.query("DELETE FROM products WHERE pro_id = ? ", [pro_id]);
+            await db.query("DELETE FROM product_image WHERE pro_id = ? ", [pro_id]);
+
+            if (result) {
+                return result.affectedRows;
+            } else {
+                throw new Error(Messages.deleteFailed); // Handle the case when the delete
+            }
+
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
 
 
@@ -138,8 +184,6 @@ class ProductModel {
         return rows[0] || null;
 
     }
-
-
 
 
 }
