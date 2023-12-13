@@ -32,26 +32,30 @@ class ProductTypeModel {
             throw error;
         }
     }
-    static async Update(typeData, type_id) {
+
+    static async Update(type_name, type_id) {
         try {
-            const [result] = await db.query('UPDATE  product_type  SET ? Where type_id = ? ', [typeData, type_id])
-            if (result.effactedRow > 0) {
-                const [response] = await db.query('SELECT * FORM product_type WHERE type_id = ? ', type_id)
-                return response
+            const [result] = await db.query('UPDATE product_type SET ? WHERE type_id = ?', [{ type_name }, type_id]);
+
+            if (result.affectedRows > 0) {
+                const [response] = await db.query('SELECT * FROM product_type WHERE type_id = ?', type_id);
+                return response;
             } else {
-                throw new Error(Messages.updateFailed)
+                throw new Error(Messages.updateFailed);
             }
         } catch (error) {
-            throw error
+            throw error;
         }
     }
+
+
     static async Delete(type_id) {
         try {
             const [result] = await db.query('DELETE FROM product_type WHERE type_id = ? ', [type_id])
-            if (result.effactedRow > 0) {
-                return result.affectedRows
+            if (result) {
+                return result.affectedRows;
             } else {
-                throw new Error(Messages.deleteFailed);
+                throw new Error(Messages.deleteFailed); // Handle the case when the delete
             }
 
         } catch (error) {
@@ -83,16 +87,14 @@ class ProductTypeModel {
     }
 
     static async FinbyUpdateType(type_name, type_id) {
-        console.log(type_name, type_id);
         try {
-            const [result] = await db.query('SELECT type_name FROM product_type WHERE type_name != ? and type_id = ? ', [type_name, type_id])
-
+            const [result] = await db.query('SELECT * FROM product_type WHERE type_name = ? AND type_id != ?', [type_name, type_id]);
             return result[0] || null;
-
         } catch (error) {
             throw error;
         }
     }
+
 }
 
 
