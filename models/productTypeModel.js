@@ -63,7 +63,7 @@ class ProductTypeModel {
         }
     }
 
-    static async GetAllProductType() {
+    static async ProductTypeAll() {
 
         try {
             const [result] = await db.query('SELECT * FROM product_type')

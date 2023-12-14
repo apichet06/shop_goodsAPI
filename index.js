@@ -8,13 +8,16 @@ app.use(express.urlencoded({ extended: false }));
 
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
-const productsType = require('./routes/productTypeRoutes');
+const productTypeRoutes = require('./routes/productTypeRoutes');
+const productImportRoutes = require('./routes/productImportRoutes');
+const cartItems = require('./routes/cartItemRoutes');
 
 app.use(cors());
 app.use('/api/users', userRoutes)
 app.use('/api/products', productRoutes)
-app.use('/api/productType', productsType)
-
+app.use('/api/productType', productTypeRoutes)
+app.use('/api/productimport', productImportRoutes)
+app.use('/api/cartIems', cartItems)
 
 
 app.get('/api/', function (req, res) {

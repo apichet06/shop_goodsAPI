@@ -60,13 +60,8 @@ class Users {
 
         try {
             const [result] = await db.query('DELETE FROM users WHERE  u_id = ?', [u_id])
-            // console.log(result.affectedRows);
-            if (result) {
-                return result.affectedRows;
-            } else {
-                throw new Error(Messages.deleteFailed); // Handle the case when the delete
-            }
-
+            // console.log(result.affectedRows); 
+            return result.affectedRows;
         } catch (error) {
             throw error;
         }

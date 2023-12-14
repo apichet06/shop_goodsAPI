@@ -1,6 +1,6 @@
 const FileUplood = require('../models/fileUploadModel');
 const ProductModel = require('../models/productModel');
-const moment = require('moment');
+// const moment = require('moment');
 const fs = require('fs');
 const Messages = require('../config/messages');
 
@@ -11,9 +11,8 @@ class ProductController {
             const { pro_name, pro_description, pro_cost_price, pro_sellprice, pro_qty, pro_minstock, pro_status, users_id, unit_id, type_id } = req.body;
             const existsProname = await ProductModel.FindByPor_name(pro_name)
 
-
             const pro_id = await ProductModel.generateUniqueId();
-            const pro_date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+            // const pro_date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
             const files = req.files;
             const folder = 'products';
@@ -39,7 +38,7 @@ class ProductController {
 
             const proData = {
                 pro_id, pro_name, pro_description, pro_cost_price, pro_sellprice,
-                pro_qty, pro_minstock, pro_status, users_id, unit_id, product_type_id: type_id, pro_date
+                pro_qty, pro_minstock, pro_status, users_id, unit_id, product_type_id: type_id
             };
 
             const product = await ProductModel.Create(proData);
@@ -119,7 +118,7 @@ class ProductController {
                 await ProductModel.delete(pro_id);
                 res.status(200).json({ status: 'ok', message: Messages.deletesuccess, data: product, image: dataunlink })
             } else {
-                res.status(404).json({ status: 'error', message: Messages.ID_not_found })
+                res.status(404).json({ status: 'error', message: Messages.idNotFound })
             }
         } catch (error) {
             res.status(500).send({ error: Messages.error500, message: error.message });
@@ -137,10 +136,8 @@ class ProductController {
 
             if (productmodels) {
                 res.status(200).json({
-                    pagination: {
-                        page,
-                        per_page
-                    },
+                    page,
+                    per_page,
                     data: productmodels,
                 });
             }

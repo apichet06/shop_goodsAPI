@@ -1,7 +1,6 @@
-const moment = require("moment");
+// const moment = require("moment");
 const Messages = require("../config/messages");
 const ProductTypeModel = require("../models/productTypeModel");
-
 
 class ProductTypeController {
 
@@ -50,7 +49,6 @@ class ProductTypeController {
     }
 
 
-
     static async DeleteProductType(req, res) {
         try {
             const { type_id } = req.params
@@ -68,7 +66,7 @@ class ProductTypeController {
 
     static async ShowAllProductType(req, res) {
         try {
-            const productType = await ProductTypeModel.GetAllProductType()
+            const productType = await ProductTypeModel.ProductTypeAll()
             res.status(200).json({ status: 'ok', data: productType });
         } catch (error) {
             res.status(500).json({ status: Messages.error500, Messages: error.message })
