@@ -72,6 +72,19 @@ class CartItemModel {
 
     }
 
+    static async Get() {
+        try {
+            const [result] = await db.query(` SELECT * ,(SELECT JSON_ARRAYAGG(JSON_OBJECT('image_file',c.image_file )) From product_image c Where b.pro_id = c.pro_id ) as Images From cart_items a 
+            INNER JOIN products b ON a.products_id = b.id
+            ORDER BY a.id asc `);
+
+            return result
+
+        } catch (error) {
+            throw error
+        }
+    }
+
 }
 
 

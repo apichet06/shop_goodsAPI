@@ -11,17 +11,22 @@ const productRoutes = require('./routes/productRoutes');
 const productTypeRoutes = require('./routes/productTypeRoutes');
 const productImportRoutes = require('./routes/productImportRoutes');
 const cartItems = require('./routes/cartItemRoutes');
+const unitRoutes = require('./routes/unitRoutes');
+const paymentRoutes = require('./routes/paymentRoutes')
 
 app.use(cors());
+
 app.use('/api/users', userRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/productType', productTypeRoutes)
 app.use('/api/productimport', productImportRoutes)
 app.use('/api/cartIems', cartItems)
+app.use('/api/unit', unitRoutes)
+app.use('/api/payment', paymentRoutes)
 
 
-app.get('/api/', function (req, res) {
-    res.send("Welcome to the Goods Shop API");
+app.get('/', function (req, res) {
+    res.send("Welcome to the API , Goods Shop ");
 })
 
 const port = process.env.PORT || 3309;
