@@ -39,8 +39,6 @@ class PaymentModel {
     }
 
 
-
-
     static async Create(Data) {
         try {
             const [Cart_items] = await db.query(`
@@ -50,24 +48,26 @@ class PaymentModel {
                 [Data.users_id]
             );
 
-            const [resultOrder] = await db.query("INSERT INTO orders SET ?, total_price = ?", [Data, Data.payment_price]);
+            const [result] = await db.query("INSERT INTO payment SET payment_id = ? ,payment_price= ?,users_id=? ",
+                [Data.payment_id, Data.payment_price, Data.users_id]);
 
-            const insertid = resultOrder.insertId;
+            const insertid = result.insertId;
 
-            console.log(Cart_items);
+            const [resultOrder] = await db.query('INSERT INTO orders SET order_id = ?,total_price= ? ,users_id = ?,payment_id=?',
+                [Data.order_id, Data.payment_price, Data.users_id, insertid]);
+
+            const insertOrder = resultOrder.insertId
 
             await Promise.all(
                 Cart_items.map(order => db.query(
                     `INSERT INTO order_items SET oitem_qty = ?, oitem_unitprice = ?, products_id = ?, order_id = ?`,
-                    [order.cart_qty, order.pro_sellprice, order.products_id, insertid]
+                    [order.cart_qty, order.pro_sellprice, order.products_id, insertOrder]
                 ))
             );
 
-            // const [result] = await db.query("INSERT INTO payment SET ?", [Data]);
+            const [response] = await db.query("SELECT * FROM payment WHERE id = ?", [result.insertId]);
 
-            // const response = await db.query("SELECT * FROM payment WHERE id = ?", [result.insertId]);
-
-            // return response;
+            return response;
         } catch (error) {
             throw error;
         }
