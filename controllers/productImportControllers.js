@@ -1,7 +1,8 @@
 const Messages = require("../config/messages");
-const ProductImportModule = require("../models/productImportModel")
+const ProductImportModule = require(__dirname + "../models/productImportModel")
 
 class ProductImportController {
+
     static async CreateProduct_import(req, res) {
         try {
             const { pro_imp_qty, pro_imp_price, pro_imp_sellprice, products_id } = req.body;
@@ -24,9 +25,7 @@ class ProductImportController {
         try {
             const { id } = req.params
             const Data = await ProductImportModule.Delete(id)
-            console.log('====================================');
-            console.log(Data);
-            console.log('====================================');
+
             if (Data == 1) {
                 res.status(200).json({ status: 'ok', data: Data })
             } else {
