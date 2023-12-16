@@ -18,7 +18,6 @@ class CartItemController {
             if (CartItem)
                 res.status(200).json({ status: 'ok', Messages: Messages.insertSuccess, data: CartItem })
 
-
         } catch (error) {
             res.status(500).json({ status: Messages.error500, Messages: error.message });
         }

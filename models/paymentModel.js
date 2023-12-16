@@ -4,7 +4,7 @@ class PaymentModel {
 
     static async generateOrder() {
         try {
-            const [result] = await db.query('SELECT MAX(order_id) AS maxId FROM orders');
+            const [result] = await db.query('SELECT MAX(order_number) AS maxId FROM orders');
             const currentMaxId = result[0].maxId;
 
             if (currentMaxId) {
@@ -53,15 +53,15 @@ class PaymentModel {
 
             const insertid = result.insertId;
 
-            const [resultOrder] = await db.query('INSERT INTO orders SET order_id = ?,total_price= ? ,users_id = ?,payment_id=?',
+            const [resultOrder] = await db.query('INSERT INTO orders SET order_number = ?,total_price= ? ,users_id = ?,payment_id=?',
                 [Data.order_id, Data.payment_price, Data.users_id, insertid]);
 
             const insertOrder = resultOrder.insertId
 
             await Promise.all(
                 Cart_items.map(order => db.query(
-                    `INSERT INTO order_items SET oitem_qty = ?, oitem_unitprice = ?, products_id = ?, order_id = ?`,
-                    [order.cart_qty, order.pro_sellprice, order.products_id, insertOrder]
+                    `INSERT INTO order_items SET oitem_qty = ?, oitem_unitprice = ?, products_id = ?, unit_id = ?, order_id = ? `,
+                    [order.cart_qty, order.pro_sellprice, order.products_id, order.unit_id, insertOrder]
                 ))
             );
 

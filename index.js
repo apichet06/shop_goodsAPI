@@ -12,7 +12,9 @@ const productTypeRoutes = require('./routes/productTypeRoutes');
 const productImportRoutes = require('./routes/productImportRoutes');
 const cartItems = require('./routes/cartItemRoutes');
 const unitRoutes = require('./routes/unitRoutes');
-const paymentRoutes = require('./routes/paymentRoutes')
+const paymentRoutes = require('./routes/paymentRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const shippingRoutes = require('./routes/shippingRoutes');
 
 app.use(cors());
 
@@ -23,7 +25,8 @@ app.use('/api/productimport', productImportRoutes)
 app.use('/api/cartIems', cartItems)
 app.use('/api/unit', unitRoutes)
 app.use('/api/payment', paymentRoutes)
-
+app.use('/api/orders', orderRoutes)
+app.use('/api/shipping', shippingRoutes)
 
 app.get('/', function (req, res) {
     res.send("Welcome to the API , Goods Shop ");

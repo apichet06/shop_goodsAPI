@@ -23,13 +23,13 @@ class CartItemModel {
             const [rows] = await db.query('SELECT * FROM cart_items WHERE products_id = ? and users_id = ? ', [Data.products_id, Data.users_id]);
 
             let result;
-            // let response;
+
             if (rows.length > 0) {
                 [result] = await db.query('UPDATE cart_items SET cart_qty = cart_qty + ? WHERE products_id = ? and users_id = ? ', [Data.cart_qty, Data.products_id, Data.users_id]);
-                // response = result.affectedRows
+
             } else {
                 [result] = await db.query('INSERT INTO cart_items SET ? ', [Data]);
-                // response = result.insertId;
+                ;
             }
 
             const [insertedRecord] = await db.query('SELECT * FROM cart_items WHERE products_id = ? AND users_id = ?', [Data.products_id, Data.users_id]);
@@ -42,6 +42,7 @@ class CartItemModel {
         }
 
     }
+    // สำหรับเลือกซื้อสินค้าอีกครั้ง
 
     static async Update(cart_qty, id) {
 
