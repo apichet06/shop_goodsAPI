@@ -15,7 +15,7 @@ class ImportProductController {
                 products_id,
             };
 
-            const product_import = await ProductImportModule.Create(Data);
+            const product_import = await ImportProduct.Create(Data);
             res.status(200).json({ status: "ok", data: product_import });
         } catch (error) {
             res.status(500).json({ status: Messages.error500, error: error.message });
@@ -25,7 +25,7 @@ class ImportProductController {
     static async DeleteProduct_import(req, res) {
         try {
             const { id } = req.params
-            const Data = await ProductImportModule.Delete(id)
+            const Data = await ImportProduct.Delete(id)
 
             if (Data == 1) {
                 res.status(200).json({ status: 'ok', data: Data })
