@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: false }));
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 const productTypeRoutes = require('./routes/productTypeRoutes');
-// const productImportRoutes = require('./routes/productImportRoutes');
+const productImportRoutes = require('./routes/productImportRoutes');
 const cartItems = require('./routes/cartItemRoutes');
 const unitRoutes = require('./routes/unitRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
