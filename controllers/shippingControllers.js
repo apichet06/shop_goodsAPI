@@ -10,13 +10,18 @@ class ShippingController {
             const shipping_key = await ShippingModel.generateShippingKey()
 
             const { order_id, status_id } = req.body
+            const sxisKey = await ShippingModel.exisData(order_id)
 
-            const files = req.files;
+
+            const sxisKeys = sxisKey ? sxisKey.shipping_key : shipping_key
+
+
+            const files = req.file;
             const folder = 'shipping';
 
-            const shipping_image = files ? files.map((file, index) => FileUpload.uploadFile(file, `${shipping_key}-${index + 1}`, folder)) : '';
+            const shipping_image = files ? await FileUpload.uploadFile(files, sxisKeys, folder) : '';
 
-            const Data = { order_id, status_id, shipping_key, shipping_image }
+            const Data = { order_id, status_id, shipping_key: sxisKeys, shipping_image }
 
             const shipping = await ShippingModel.Create(Data)
             if (shipping)

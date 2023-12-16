@@ -21,18 +21,30 @@ class ShippingModel {
 
     static async Create(Data) {
         try {
-            const exisquery = await db.query('SELECT * FROM shipping WHERE  order_id = ? ', Data.order_Id);
+
+            // const [exisquery] = await db.query('SELECT * FROM shipping WHERE  order_id = ? ', Data.order_id);
+            let exisquery = await this.exisData(Data.order_id)
+
+            const exisqueryX = exisquery != null ? [exisquery].length : 0
+            // console.log('====================================');
+            // console.log(exisquery, exisqueryX);
+            // console.log('====================================');
+
             let result;
             let insrtId;
-            if (exisquery.length > 0) {
-                [result] = await db.query('UPDATE shipping SET ? WHERE order_id = ? ', [Data, Data.order_Id])
+
+            if (exisqueryX > 0) {
+
+                [result] = await db.query('UPDATE shipping SET shipping_image =? ,status_id =? WHERE order_id = ? ', [Data.shipping_image, Data.status_id, Data.order_id])
+
             } else {
+
                 [result] = await db.query('INSERT INTO shipping SET ? ', [Data])
                 insrtId = result.insrtId
+
             }
 
-
-            const [shipping] = await db.query('SELECT * FROM shipping WHERE id = ? ', insrtId)
+            const [shipping] = await db.query('SELECT * FROM shipping WHERE order_id = ? ', Data.order_id)
 
             return shipping;
 
@@ -41,6 +53,19 @@ class ShippingModel {
         }
 
     }
+
+
+    static async exisData(order_id) {
+        try {
+            const [exisquery] = await db.query('SELECT shipping_key FROM shipping WHERE  order_id = ? ', order_id);
+
+            return exisquery[0] || null;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
 }
 
