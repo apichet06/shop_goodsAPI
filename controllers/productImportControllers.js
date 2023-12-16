@@ -24,7 +24,9 @@ class ProductImportController {
         try {
             const { id } = req.params
             const Data = await ProductImportModule.Delete(id)
-
+            console.log('====================================');
+            console.log(Data);
+            console.log('====================================');
             if (Data == 1) {
                 res.status(200).json({ status: 'ok', data: Data })
             } else {

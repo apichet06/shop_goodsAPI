@@ -1,45 +1,47 @@
 const db = require("../config/db");
 
 class ProductImportModule {
-
-
-    static async Create(Data) {
-
+    static async Create(data) {
         try {
+            const [result] = await db.query('INSERT INTO product_import SET ?', [data]);
 
-            const [result] = await db.query('INSERT INTO product_import SET ?', [Data])
-
-            await db.query('UPDATE products SET pro_qty = pro_qty + ?, pro_sellprice = ? WHERE id = ?', [Data.pro_imp_qty, Data.pro_imp_sellprice, Data.products_id]);
+            await db.query(
+                'UPDATE products SET pro_qty = pro_qty + ?, pro_sellprice = ? WHERE id = ?',
+                [data.pro_imp_qty, data.pro_imp_sellprice, data.products_id]
+            );
 
             const response = result.insertId;
-            const [insertedRecord] = await db.query('SELECT * FROM product_import WHERE id =  ? ', response)
+            const [insertedRecord] = await db.query('SELECT * FROM product_import WHERE id =  ? ', response);
 
             return insertedRecord;
         } catch (error) {
+            console.error('Error in ProductImportModule Create:', error);
             throw error;
         }
     }
 
-
     static async Delete(id) {
         try {
-
             const [rows] = await db.query('SELECT * FROM product_import WHERE id = ?', [id]);
 
-            await db.query('UPDATE products SET pro_qty = pro_qty - ? WHERE id = ?', [rows[0].pro_imp_qty, rows[0].products_id]);
-
+            if (rows.length > 0)
+                await db.query('UPDATE products SET pro_qty = pro_qty - ? WHERE id = ?', [
+                    rows[0].pro_imp_qty,
+                    rows[0].products_id,
+                ]);
 
             const [result] = await db.query('DELETE FROM product_import WHERE id = ? ', [id]);
 
             return result.affectedRows;
         } catch (error) {
+            console.error('Error in ProductImportModule Delete:', error);
             throw error;
         }
     }
 
-    static async GetAll(Data) {
+    static async GetAll(data) {
         try {
-            Data = Data || '';
+            data = data || '';
 
             const [result] = await db.query(
                 `SELECT *, 
@@ -47,14 +49,16 @@ class ProductImportModule {
                  FROM product_image c WHERE b.pro_id = c.pro_id) AS images
                 FROM product_import a 
                 INNER JOIN products b ON a.products_id = b.id 
-                WHERE b.pro_name LIKE  ?`, [`%${Data}%`]);
+                WHERE b.pro_name LIKE  ?`,
+                [`%${data}%`]
+            );
 
             return result;
         } catch (error) {
+            console.error('Error in ProductImportModule GetAll:', error);
             throw error;
         }
     }
-
 }
 
-module.exports = ProductImportModule
+module.exports = ProductImportModule;
