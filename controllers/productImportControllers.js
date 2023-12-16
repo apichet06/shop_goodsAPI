@@ -1,5 +1,5 @@
 const Messages = require("../config/messages");
-const ProductImportModule = require(__dirname + "../models/productImportModel")
+const ProductImportModule = require("../models/productImportModel")
 
 class ProductImportController {
 
