@@ -32,7 +32,7 @@ app.get('/', function (req, res) {
     res.send("Welcome to the API , Goods Shop ");
 })
 
-const port = process.env.PORT || 3309;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log("Server Running on Port " + port);
 });
