@@ -18,7 +18,7 @@ const importProductRoutes = require('./routes/importproductRoutes');
 
 
 app.use(cors());
-
+app.use('/api/uploads', express.static('uploads'));
 app.use('/api/users', userRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/productType', productTypeRoutes)

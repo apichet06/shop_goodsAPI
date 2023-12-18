@@ -3,12 +3,13 @@ const ProductController = require('../controllers/productControllers');
 
 const router = express.Router();
 const multer = require('multer');
+const auth = require('../middleware/auth');
 const upload = multer({ dest: 'uploads/' })
 
 
 router.get('/:page/:per_page', ProductController.ProductAll);
-router.post('/', upload.array('file'), ProductController.CreateProdect)
-router.put('/:pro_id', upload.array('file'), ProductController.UpdateProduct)
-router.delete('/:pro_id', ProductController.DeleteProduct)
+router.post('/', upload.array('file'), auth.authenticateToken, ProductController.CreateProdect)
+router.put('/:pro_id', upload.array('file'), auth.authenticateToken, ProductController.UpdateProduct)
+router.delete('/:pro_id', auth.authenticateToken, ProductController.DeleteProduct)
 
 module.exports = router
