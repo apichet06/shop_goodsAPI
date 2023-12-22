@@ -123,7 +123,7 @@ class UsersController {
             }
 
             // Generate JWT token
-            const token = jwt.sign({ userId: user.u_id, kty: 'oct' }, process.env.JWT_SECRET, { expiresIn: '24h' });
+            const token = jwt.sign({ userId: user.u_id }, process.env.JWT_SECRET, { expiresIn: '24h' });
             delete user.u_password
             // Return the token
             res.json({ success: true, token, user });
