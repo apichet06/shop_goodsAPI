@@ -3,126 +3,54 @@ const ProductModel = require('../models/productModel');
 // const moment = require('moment');
 const fs = require('@cyclic.sh/s3fs')
 const Messages = require('../config/messages');
-const AWS = require('aws-sdk');
 
-const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
 class ProductController {
-
-
 
     static async CreateProdect(req, res) {
         try {
-
-            // ตรวจสอบว่ามี environment variables ที่จำเป็นได้ถูกตั้งค่าหรือไม่
-            if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_REGION) {
-                console.error("AWS credentials or region not set.");
-                process.exit(1); // จบโปรแกรมถ้าไม่มี credentials
-            }
-
-            // ตั้งค่า AWS SDK
-            AWS.config.update({
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-                region: process.env.AWS_REGION,
-            });
-
-            const s3 = new AWS.S3()
-
             const { pro_name, pro_description, pro_cost_price, pro_sellprice, pro_qty, pro_minstock, pro_status, users_id, unit_id, type_id } = req.body;
             const existsProname = await ProductModel.FindByPor_name(pro_name)
 
             const pro_id = await ProductModel.generateUniqueId();
-            const file = req.file;
+            // const pro_date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+
+            const files = req.files;
+
             const folder = 'products';
-            // Generate a unique key for the S3 object using UUID
-            const key = `${folder}/${uuidv4()}_${file.originalname}`;
 
-            // Upload file to S3
-            const params = {
-                Bucket: process.env.S3_BUCKET,
-                Key: key,
-                Body: file.buffer, // The file content as a Buffer
-                ContentType: file.mimetype,
-                ACL: 'public-read', // Set appropriate ACL based on your requirements
-            };
+            if (existsProname) {
+                files.map(file => {
+                    file && fs.unlinkSync(file.path);
+                })
+                return res.status(400).json({ status: 'error', message: Messages.exists + existsProname.pro_name })
 
-            const uploadResult = await s3.upload(params).promise();
+            }
+
+            // บันทีกรูปภาพ หลายๆรูปภาพ
+            const filePromises = files ? files.map((file, index) => FileUplood.uploadFile(file, `${pro_id}-${index + 1}`, folder)) : '';
+
+            // ดึงรายชื่อแบบเต็มรูปแบบ เพื่อนำไป insert product image
+            const fileUploadResults = await Promise.all(filePromises);
+            const image_filename = fileUploadResults.map(result => result);
+
+            // บันทึกข้อมูลรูปภาพ array 
+            await ProductModel.ProductImages(image_filename, pro_id);
 
 
             const proData = {
-                pro_id,
-                pro_name,
-                pro_description,
-                pro_cost_price,
-                pro_sellprice,
-                pro_qty,
-                pro_minstock,
-                pro_status,
-                users_id,
-                unit_id,
-                product_type_id: type_id,
-                // Add the S3 URL to your data
-                pro_image_url: uploadResult.Location,
+                pro_id, pro_name, pro_description, pro_cost_price, pro_sellprice,
+                pro_qty, pro_minstock, pro_status, users_id, unit_id, product_type_id: type_id
             };
 
             const product = await ProductModel.Create(proData);
 
-            res.status(200).json({ status: 'ok', data: { product, uploadedFileURLs } });
+            res.status(200).json({ status: 'ok', data: product });
 
         } catch (error) {
             res.status(500).send({ error: Messages.error500, message: error.message });
         }
+
     }
-
-
-
-
-    // static async CreateProdect(req, res) {
-    //     try {
-    //         const { pro_name, pro_description, pro_cost_price, pro_sellprice, pro_qty, pro_minstock, pro_status, users_id, unit_id, type_id } = req.body;
-    //         const existsProname = await ProductModel.FindByPor_name(pro_name)
-
-    //         const pro_id = await ProductModel.generateUniqueId();
-    //         // const pro_date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-
-    //         const files = req.files;
-
-    //         const folder = 'products';
-
-    //         if (existsProname) {
-    //             files.map(file => {
-    //                 file && fs.unlinkSync(file.path);
-    //             })
-    //             return res.status(400).json({ status: 'error', message: Messages.exists + existsProname.pro_name })
-
-    //         }
-
-    //         // บันทีกรูปภาพ หลายๆรูปภาพ
-    //         const filePromises = files ? files.map((file, index) => FileUplood.uploadFile(file, `${pro_id}-${index + 1}`, folder)) : '';
-
-    //         // ดึงรายชื่อแบบเต็มรูปแบบ เพื่อนำไป insert product image
-    //         const fileUploadResults = await Promise.all(filePromises);
-    //         const image_filename = fileUploadResults.map(result => result);
-
-    //         // บันทึกข้อมูลรูปภาพ array 
-    //         await ProductModel.ProductImages(image_filename, pro_id);
-
-
-    //         const proData = {
-    //             pro_id, pro_name, pro_description, pro_cost_price, pro_sellprice,
-    //             pro_qty, pro_minstock, pro_status, users_id, unit_id, product_type_id: type_id
-    //         };
-
-    //         const product = await ProductModel.Create(proData);
-
-    //         res.status(200).json({ status: 'ok', data: product });
-
-    //     } catch (error) {
-    //         res.status(500).send({ error: Messages.error500, message: error.message });
-    //     }
-
-    // }
 
     static async UpdateProduct(req, res) {
 
