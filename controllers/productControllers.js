@@ -15,6 +15,7 @@ class ProductController {
             // const pro_date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
             const files = req.files;
+
             const folder = 'products';
 
             if (existsProname) {
