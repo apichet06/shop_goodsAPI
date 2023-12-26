@@ -1,7 +1,7 @@
 const FileUplood = require('../models/fileUploadModel');
 const ProductModel = require('../models/productModel');
 // const moment = require('moment');
-const fs = require('@cyclic.sh/s3fs/promises')
+const fs = require('@cyclic.sh/s3fs')
 const Messages = require('../config/messages');
 
 class ProductController {
