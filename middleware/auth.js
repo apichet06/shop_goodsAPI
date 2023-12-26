@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Messages = require('../config/messages');
 require('dotenv');
-const fs = require('fs');
+const fs = require('@cyclic.sh/s3fs/promises')
 
 class auth {
     static async authenticateToken(req, res, next) {
