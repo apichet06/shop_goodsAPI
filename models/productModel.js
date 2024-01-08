@@ -114,7 +114,23 @@ class ProductModel {
     }
 
 
+    static async GetProduct(pro_id) {
+        try {
 
+            const sql = `
+              SELECT *, (Select JSON_ARRAYAGG(JSON_OBJECT('image_file',pi.image_file)) From product_image pi Where pi.pro_id = a.pro_id) as images FROM products a 
+              Left join product_type b On a.product_type_id = b.id
+              Left join unit c On a.unit_id = c.id
+              WHERE a.pro_id = ?
+             `;
+
+            const [queryparams] = await db.query(sql, [pro_id])
+            return queryparams[0]
+
+        } catch (error) {
+            throw error
+        }
+    }
 
     static async ShowproductsAll(page, per_page, searchQ) {
         try {

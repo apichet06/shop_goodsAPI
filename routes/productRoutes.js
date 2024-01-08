@@ -6,7 +6,7 @@ const multer = require('multer');
 const auth = require('../middleware/auth');
 const upload = multer({ dest: 'uploads/' })
 
-
+router.get('/:pro_id', ProductController.ProductID);
 router.get('/:page/:per_page', ProductController.ProductAll);
 router.post('/', upload.array('file'), auth.authenticateToken, ProductController.CreateProdect)
 router.put('/:pro_id', upload.array('file'), auth.authenticateToken, ProductController.UpdateProduct)
