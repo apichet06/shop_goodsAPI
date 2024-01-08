@@ -1,5 +1,4 @@
 const db = require("../config/db");
-const bcrypt = require("bcrypt");
 const Messages = require("../config/messages");
 
 class Users {
@@ -94,9 +93,7 @@ class Users {
         return rows[0] || null;
     }
 
-    static async comparePassword(password, hashedPassword) {
-        return bcrypt.compare(password, hashedPassword)
-    }
+
 
 
 

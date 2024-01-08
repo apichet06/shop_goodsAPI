@@ -116,7 +116,7 @@ class UsersController {
                 return res.status(400).json({ error: Messages.userNotFound });
             }
             // Compare passwords
-            const passwordMatch = await Users.comparePassword(u_password, user.u_password);
+            const passwordMatch = await bcrypt.compare(u_password, user.u_password)
             // console.log(passwordMatch);
             if (!passwordMatch) {
                 return res.status(401).json({ error: Messages.invalidPassword });
