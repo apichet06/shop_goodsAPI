@@ -114,6 +114,7 @@ class ProductModel {
     }
 
 
+
     static async GetProduct(pro_id) {
         try {
 
@@ -132,12 +133,32 @@ class ProductModel {
         }
     }
 
+    static async GetProductType(type_id) {
+        try {
+
+            const sql = `
+              SELECT *,a.id as id ,(Select JSON_ARRAYAGG(JSON_OBJECT('image_file',pi.image_file)) From product_image pi Where pi.pro_id = a.pro_id) as images FROM products a 
+              Left join product_type b On a.product_type_id = b.id
+              Left join unit c On a.unit_id = c.id
+              WHERE b.id = ?
+              order by RAND() LIMIT 2
+             `;
+
+            const [queryparams] = await db.query(sql, [type_id])
+            return queryparams
+
+        } catch (error) {
+            throw error
+        }
+    }
+
+
     static async ShowproductsAll(page, per_page, searchQ) {
         try {
             const offset = (page - 1) * per_page;
 
             let sql = `
-                SELECT p.*, pt.type_name,
+                SELECT p.*, pt.*,
                 (SELECT JSON_ARRAYAGG(JSON_OBJECT('image_file', pi.image_file, 'image_date', pi.image_date))
                 FROM product_image pi WHERE pi.pro_id = p.pro_id) AS images
                 FROM products p
@@ -165,6 +186,7 @@ class ProductModel {
                 pro_qty: product.pro_qty,
                 pro_minstock: product.pro_minstock,
                 type_id: product.type_id,
+                type_name: product.type_name,
                 pro_status: product.pro_status,
                 images: product.images // Array of image_file  
             }));

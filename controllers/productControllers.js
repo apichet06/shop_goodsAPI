@@ -165,6 +165,22 @@ class ProductController {
         }
     }
 
+    static async ProductTyoeID(req, res) {
+        try {
+
+            const { type_id } = req.params
+            const productmodels = await ProductModel.GetProductType(type_id)
+
+            if (productmodels) {
+                res.status(200).json({
+                    data: productmodels
+                });
+            }
+
+        } catch (error) {
+            res.status(500).send({ error: Messages.error500, message: error.message })
+        }
+    }
 }
 
 

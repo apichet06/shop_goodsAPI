@@ -16,9 +16,10 @@ class auth {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) {
 
-                files.map(file => {
-                    file && fs.unlinkSync(file.path);
-                })
+                if (files)
+                    files.map(file => {
+                        file && fs.unlinkSync(file.path);
+                    })
                 return res.status(403).json({ status: Messages.error, Message: Messages.invalidToken });
             }
             req.userId = decoded.userId;
