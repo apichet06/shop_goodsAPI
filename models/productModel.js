@@ -119,7 +119,7 @@ class ProductModel {
         try {
 
             const sql = `
-              SELECT *, (Select JSON_ARRAYAGG(JSON_OBJECT('image_file',pi.image_file)) From product_image pi Where pi.pro_id = a.pro_id) as images FROM products a 
+              SELECT *,a.id as id, (Select JSON_ARRAYAGG(JSON_OBJECT('image_file',pi.image_file)) From product_image pi Where pi.pro_id = a.pro_id) as images FROM products a 
               Left join product_type b On a.product_type_id = b.id
               Left join unit c On a.unit_id = c.id
               WHERE a.pro_id = ?
